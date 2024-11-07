@@ -1,3 +1,4 @@
+import e from 'express';
 import mongoose from 'mongoose';
 
 // Defines the user schema
@@ -10,6 +11,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [ true, 'Email is required' ],
     unique: [ true, 'Email already exists'],
+  },
+  emailValidated: {
+    type: Boolean,
+    default: false,
   },
   password: {
     type: String,
