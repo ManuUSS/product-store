@@ -1,9 +1,7 @@
-import { BcryptAdapter } from "../../config";
-import { UserModel } from "../../data";
-import { CustomError, RegisterUserDto } from "../../domain";
-import { UserEntity } from "../../domain/entities/user.entity";
-
-
+import { BcryptAdapter } from '../../config';
+import { UserModel } from '../../data';
+import { CustomError, LoginUserDto, RegisterUserDto } from '../../domain';
+import { UserEntity } from '../../domain/entities/user.entity';
 
 
 export class AuthService {
@@ -25,12 +23,32 @@ export class AuthService {
 
       const { password, ...rest } = UserEntity.fromObject( user );
 
-      return { ...rest, token: 'ABC' };
+      return { user: rest, token: 'ABC' };
 
     } catch ( error ) {
       throw CustomError.internalServer(`${ error }`);
     }
 
+
+  }
+
+
+  public async loginUser( loginUserDto:LoginUserDto ) {
+
+    const existsUser = await UserModel.findOne({ email:loginUserDto.email });
+
+    if( !existsUser ) throw CustomError.badRequest('Email and password do not match');
+
+    const isPasswordMatching = BcryptAdapter.compare( 
+      loginUserDto.password, 
+      existsUser.password 
+    );
+
+    if( !isPasswordMatching ) throw CustomError.badRequest('Email and password do not match');
+
+    const { password, ...rest } = UserEntity.fromObject( existsUser );
+
+    return { user: rest, token: 'ABC' };
 
   }
 
