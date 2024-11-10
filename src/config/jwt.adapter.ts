@@ -20,7 +20,7 @@ export class JWTAdapter {
   };
 
   static verifyToken( token:string ):Record<string, any> {
-    return { id: 'any' };
+    throw new Error('Method not implemented.');
   };
 
 };
