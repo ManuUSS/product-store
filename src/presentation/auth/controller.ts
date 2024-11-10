@@ -19,7 +19,7 @@ export class AuthController {
 
     this.authService.registerUser( userRegisterDto! )
       .then( user => res.json( user ) )
-    res.json('register');
+      res.json('register');
   }
 
   loginUser = ( req:Request, res:Response ) => {
