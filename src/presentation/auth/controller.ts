@@ -44,8 +44,14 @@ export class AuthController {
       res.json('register');
   }
 
-  validateUser = ( req:Request, res:Response ) => {
-    res.json('validateUser');
+  validateEmail = ( req:Request, res:Response ) => {
+    const { token } = req.params;
+    
+    this.authService.validateEmail( token )
+      .then( () => res.json( 'Email validated' ) )
+      .catch( error => this.handleError( error, res ) );
+
+    res.json('validateEmail');
   }
 
 }

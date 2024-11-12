@@ -19,8 +19,18 @@ export class JWTAdapter {
 
   };
 
-  static verifyToken( token:string ):Record<string, any> {
-    throw new Error('Method not implemented.');
+  static verifyToken( token:string ) {
+
+    return new Promise(( resolve ) => {
+      jwt.verify( token, JWT_SEED, (err, decoded) => {
+        
+        if ( err ) resolve( null );
+        
+        resolve( decoded );
+      
+      });
+    });
+
   };
 
 };
