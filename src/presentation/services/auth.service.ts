@@ -2,11 +2,14 @@ import { BcryptAdapter, JWTAdapter } from '../../config';
 import { UserModel } from '../../data';
 import { CustomError, LoginUserDto, RegisterUserDto } from '../../domain';
 import { UserEntity } from '../../domain/entities/user.entity';
+import { type EmailService } from './email.service';
 
 
 export class AuthService {
 
-  constructor() {};
+  constructor(
+    private readonly emailService:EmailService,
+  ) {};
 
   public async registerUser( registerUser:RegisterUserDto ) {
 
@@ -20,6 +23,7 @@ export class AuthService {
       user.password = BcryptAdapter.hash( registerUser.password );
 
       await user.save();
+      this.sendEmailValidationLink( user.email );
 
       const { password, ...rest } = UserEntity.fromObject( user );
 
@@ -53,6 +57,15 @@ export class AuthService {
     if( !token ) throw CustomError.internalServer('Error generating token');
 
     return { user: rest, token };
+
+  }
+
+  private async sendEmailValidationLink ( email:string ) {
+    
+    const token = await JWTAdapter.generateToken({ email });
+    if( !token ) throw CustomError.internalServer('Error generating token');
+
+    const link = `localhost:300/`;
 
   }
 
