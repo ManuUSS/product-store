@@ -1,4 +1,5 @@
 import { BcryptAdapter, JWTAdapter } from '../../config';
+import { envs } from '../../config/envs';
 import { UserModel } from '../../data';
 import { CustomError, LoginUserDto, RegisterUserDto } from '../../domain';
 import { UserEntity } from '../../domain/entities/user.entity';
@@ -65,7 +66,24 @@ export class AuthService {
     const token = await JWTAdapter.generateToken({ email });
     if( !token ) throw CustomError.internalServer('Error generating token');
 
-    const link = `localhost:300/`;
+    const link = `${ envs.WEBSERVICE_URL }/auth/validate-email/${ token }`;
+
+    const htmlBody = `
+      <h1>Validate your email</h1>
+      <p>Click the link below to validate your email</p>
+      <a href="${ link }">Validate email</a>
+    `;  
+    
+    const options = {
+      to: email,
+      subject: 'Validate your email',
+      htmlBody,
+    };  
+
+    const isEmailSent = await this.emailService.sendEmail( options );
+
+    if( !isEmailSent ) throw CustomError.internalServer('Error sending email');
+
 
   }
 
