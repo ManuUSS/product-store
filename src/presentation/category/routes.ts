@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import { envs } from '../../config/envs';
 import { CategoryController } from './controller';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 
 
@@ -16,7 +17,7 @@ export class CategoryRoutes {
     const controller = new CategoryController();
 
     router.get('/', controller.getCategories );
-    router.post('/', controller.createCategory );
+    router.post('/', [ AuthMiddleware.validateJWT ], controller.createCategory );
 
     return router;
   }
