@@ -1,10 +1,13 @@
 import { type Request, type Response } from 'express';
 import { CreateCategoryDto, CustomError } from '../../domain';
+import { CategoryService } from '../services/category.service';
 
 
 export class CategoryController {
 
-  constructor(){};
+  constructor(
+    private readonly categoryService:CategoryService
+  ){};
 
   private handleError = ( error:unknown, res:Response ) => {
 
@@ -16,13 +19,16 @@ export class CategoryController {
 
   } 
 
-  createCategory = async ( req:Request, res:Response ) => {
+  createCategory = ( req:Request, res:Response ) => {
 
     const [ error, categoryDto ] = CreateCategoryDto.create( req.body );
 
     if( error ) return this.handleError( new CustomError(400, error), res );
 
-    res.json('createCategory');
+    this.categoryService.createCategory( categoryDto!, req.body.user )
+      .then( category => res.status( 201 ).json( category ) )
+      .catch( error => this.handleError( error, res ) );
+
   }
 
   getCategories = async ( req:Request, res:Response ) => {
