@@ -19,14 +19,14 @@ export class JWTAdapter {
 
   };
 
-  static verifyToken( token:string ) {
+  static verifyToken<T>( token:string ):Promise<T | null> {
 
     return new Promise(( resolve ) => {
       jwt.verify( token, JWT_SEED, (err, decoded) => {
         
         if ( err ) resolve( null );
         
-        resolve( decoded );
+        resolve( decoded as T );
       
       });
     });
