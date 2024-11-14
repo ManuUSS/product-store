@@ -1,5 +1,5 @@
 import { type Request, type Response } from 'express';
-import { CreateCategoryDto, CustomError } from '../../domain';
+import { CreateCategoryDto, CustomError, PaginationDto } from '../../domain';
 import { CategoryService } from '../services/category.service';
 
 
@@ -32,6 +32,13 @@ export class CategoryController {
   }
 
   getCategories = ( req:Request, res:Response ) => {
+
+    const { page = 1, limit = 10 } = req.query;
+    const [ error, paginationDto ] = PaginationDto.create( +page, +limit );
+
+    if( error ) return this.handleError( new CustomError(400, error), res );
+
+    
 
     this.categoryService.getCategories()
       .then( categories => res.status( 200 ).json( categories ) )
