@@ -1,5 +1,5 @@
 import { CategoryModel } from '../../data/mongo/models/category.model';
-import { CustomError, type CreateCategoryDto, type UserEntity } from '../../domain';
+import { CategoryEntity, CustomError, type CreateCategoryDto, type UserEntity } from '../../domain';
 
 
 export class CategoryService {
@@ -32,6 +32,19 @@ export class CategoryService {
     }
 
   };  
+
+  async getCategories() {
+    
+    try {
+      const categories = await CategoryModel.find();
+      const categoriesEntities = categories.map( category => CategoryEntity.fromObject( category ) );
+      return categoriesEntities;
+    } catch ( error ) {
+      throw CustomError.internalServer('Internal server error');
+    }
+
+
+  };
 
 }
 
