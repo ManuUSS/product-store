@@ -43,7 +43,7 @@ export class ProductService {
           .skip( ( page - 1 ) * limit )
           .limit( limit )
           .populate('user', 'name email')
-          .populate('category', 'name'),
+          .populate('category', 'name')
       ]);
 
       return {
