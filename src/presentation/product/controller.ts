@@ -20,8 +20,11 @@ export class ProductController {
   } 
 
   createProduct = ( req:Request, res:Response ) => {
-
-    const [ error, createProductDto ] = CreateProductDto.create( req.body );
+    
+    const [ error, createProductDto ] = CreateProductDto.create({
+      ...req.body,
+      user: req.body.user.id
+    });
 
     if( error ) return this.handleError( new CustomError(400, error), res );
 

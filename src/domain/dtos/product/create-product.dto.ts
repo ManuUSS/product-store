@@ -1,3 +1,4 @@
+import { Validators } from "../../../config";
 
 
 export class CreateProductDto {
@@ -17,9 +18,13 @@ export class CreateProductDto {
 
     if( !name ) return [ 'Name is required' ];
     if( !description ) return [ 'Description is required' ];
+    
     if( !user ) return [ 'User is required' ];
-    if( !category ) return [ 'Category is required' ];
+    if( !Validators.isMongoId( user ) ) return [ 'Invalid user id' ];
 
+    if( !category ) return [ 'Category is required' ];
+    if( !Validators.isMongoId( category ) ) return [ 'Invalid category id' ];
+    
     return [ 
       undefined, 
       new CreateProductDto( name, description, !!available, price, user, category ) 
