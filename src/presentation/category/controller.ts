@@ -40,7 +40,7 @@ export class CategoryController {
 
     
 
-    this.categoryService.getCategories()
+    this.categoryService.getCategories( paginationDto! )
       .then( categories => res.status( 200 ).json( categories ) )
       .catch( error => this.handleError( error, res ) );
 

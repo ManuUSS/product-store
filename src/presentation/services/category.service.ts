@@ -1,5 +1,11 @@
 import { CategoryModel } from '../../data/mongo/models/category.model';
-import { CategoryEntity, CustomError, type CreateCategoryDto, type UserEntity } from '../../domain';
+import { 
+  CategoryEntity, 
+  CustomError, 
+  PaginationDto, 
+  type CreateCategoryDto, 
+  type UserEntity 
+} from '../../domain';
 
 
 export class CategoryService {
@@ -33,12 +39,32 @@ export class CategoryService {
 
   };  
 
-  async getCategories() {
+  async getCategories( paginationDto:PaginationDto ) {
     
+    const { page, limit } = paginationDto;
+
     try {
-      const categories = await CategoryModel.find();
+
+      const [ total, categories ] = await Promise.all([
+        CategoryModel.countDocuments(),
+        CategoryModel.find()
+          .skip( ( page - 1 ) * limit )
+          .limit( limit )
+      ]);
       const categoriesEntities = categories.map( category => CategoryEntity.fromObject( category ) );
-      return categoriesEntities;
+      
+      return {
+        meta: {
+          page,
+          limit,
+          total,
+          next: `/api/categories?page=${ page + 1 }&limit=${ limit }`,
+          prev: (page - 1 > 0) ? `/api/categories?page=${ page - 1 }&limit=${ limit }` : null,
+          totalPages: Math.ceil( total / limit ),
+        },
+        categories: categoriesEntities
+      };
+      
     } catch ( error ) {
       throw CustomError.internalServer('Internal server error');
     }
