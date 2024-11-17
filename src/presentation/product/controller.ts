@@ -24,6 +24,8 @@ export class ProductController {
 
     if( error ) return this.handleError( new CustomError(400, error), res );
 
+    res.json({ message: 'Product created' });
+
   }
 
   getProducts = ( req:Request, res:Response ) => {
@@ -33,6 +35,7 @@ export class ProductController {
 
     if( error ) return this.handleError( new CustomError(400, error), res );
 
+    res.json({ message: 'Products' });
 
   }
 
