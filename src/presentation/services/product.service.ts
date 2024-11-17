@@ -1,7 +1,6 @@
 
 import { ProductModel } from '../../data/mongo/models/product.model';
 import { 
-  type CategoryEntity, 
   type CreateProductDto, 
   CustomError, 
   PaginationDto,
@@ -43,6 +42,8 @@ export class ProductService {
         ProductModel.find()
           .skip( ( page - 1 ) * limit )
           .limit( limit )
+          .populate('user', 'name email')
+          .populate('category', 'name'),
       ]);
 
       return {
