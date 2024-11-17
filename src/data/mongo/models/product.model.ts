@@ -31,5 +31,13 @@ const productSchema = new mongoose.Schema({
   },
 });
 
+productSchema.set( 'toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function( doc, ret, options ){
+    delete ret._id;
+  },
+});
+
 // Exports the product model using the above schema previously defined
 export const ProductModel = mongoose.model( 'Product', productSchema );
