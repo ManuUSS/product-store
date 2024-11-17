@@ -9,3 +9,5 @@ export * from './entities/category.entity';
 export * from './dtos/category/create-category.dto';
 
 export * from './dtos/shared/pagination.dto';
+
+export * from './dtos/product/create-product.dto';
