@@ -1,12 +1,16 @@
 import path from 'path';
 import fs from 'fs';
 import { type UploadedFile } from 'express-fileupload';
+import { Uuid } from '../../config';
+import { CustomError } from '../../domain';
 
 
 export class FileUploadService {
 
 
-  constructor(){};
+  constructor(
+    private readonly uuid = Uuid.v4
+  ){};
 
 
   private checkFolder( folderPath:string ){
@@ -22,15 +26,25 @@ export class FileUploadService {
   ){
 
     try {
-      const fileExtension = file.mimetype.split('/').at( 1 );
+      const fileExtension = file.mimetype.split('/').at( 1 ) ?? '';
+
+      if( !validExtensions.includes( fileExtension ) ){
+        throw CustomError.badRequest(
+          'Invalid file extension, valid ones are: ' + validExtensions.join(',')
+        );
+      }
+
       const destination = path.resolve( __dirname, '../../../upload/', folder );
       this.checkFolder( destination );
 
-      
-      file.mv( `${ destination }/my-file.${ fileExtension }` );
+      const fileName = `${ this.uuid() }.${ fileExtension }`;
+
+      file.mv( `${ destination }/${ fileName }` );
+
+      return { fileName };
 
     } catch ( error ) {
-      
+      throw error;
     }
 
 
